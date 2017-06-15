@@ -1,18 +1,35 @@
-const express = require('express')
-const app = express()
-const server = require('http').createServer(app)
-const io = require('socket.io').listen(server)
+const app = require('express')();
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
 
-users = []
-connection = []
+users = [];
 
-app.get('/', function (req, res) {
-  res.sendFile(__dirname + '/public/index.html')
-})
+app.get('/', function(req, res){
+  res.sendFile(__dirname + '/public/index.html');
+});
 
-server.listen(8080)
-console.log('listening on port 8080....')
-
-// app.listen(8080, function () {
-//   console.log('listening on port 8080....')
-// })
+io.on('connection', function(socket){
+  console.log('Session started');
+  // console.log(socket)
+  socket.on('setUsername', function(data){
+    console.log(data);
+    // console.log(users)
+    // console.log(connections)
+    if(users.indexOf(data) > -1){
+      socket.emit('userExists', data + ' username is taken! Try some other username.');
+    }
+    else{
+      users.push(data);
+      socket.emit('userSet', {username: data});
+      
+      console.log(users.length + " user connected")
+    }
+  });
+  socket.on('msg', function(data){
+      //Send message to everyone
+      io.sockets.emit('newmsg', data);
+  })
+});
+http.listen(8080, function(){
+  console.log('listening on localhost:8080');
+});

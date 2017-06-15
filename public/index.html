@@ -1,11 +1,52 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>
-         chat app           
-        </title>
-    </head>
- <body>
-    TEST
- </body>
+    <head><title>Hello world</title></head>
+    
+     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+     <script  src="/socket.io/socket.io.js"></script>
+    
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io();
+        function setUsername(){
+            socket.emit('setUsername', document.getElementById('name').value);
+        };
+        var user;
+        socket.on('userExists', function(data){
+            document.getElementById('data').innerHTML = data;
+        });
+        socket.on('userSet', function(data){
+            user = data.username;
+            
+            // style="position: fixed; bottom: 0; width: 100%;"
+            
+            document.body.innerHTML = '<div class="container"><div style="background-color:#ccffff" id="message-container"></div>\
+            <div >\
+            <label>Enter message</label>\
+            <input type="text" style="color:black" size="100" id="message"><br>\
+            <button type="button" class="btn btn-success btn-lg" name="button" onclick="sendMessage()">Send</button></div>\
+            </div>';
+        });
+        function sendMessage(){
+            var msg = document.getElementById('message').value;
+            document.getElementById('message').value = "";
+            if(msg){
+                socket.emit('msg', {message: msg, user: user});
+                
+            }
+        }
+        socket.on('newmsg', function(data){
+            if(user){
+                document.getElementById('message-container').innerHTML += '<div><b>' + data.user + '</b>: ' + data.message + '</div>'
+            }
+        })
+    </script>
+    <body>
+        <br>
+        <div id="data">
+        <input size="105" id="name" type="text" name="name" value="" placeholder="Enter your name!"><br><br>
+        <button type="button" name="button" class="btn btn-danger" onclick="setUsername()">Let me chat!</button>
+        </div>
+    </body>
 </html>
