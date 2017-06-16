@@ -38,7 +38,7 @@
         }
         socket.on('newmsg', function(data){
             if(user){
-                console.log(data.user+":"+data.message)
+                // console.log(data.user+":"+data.message)
                 document.getElementById('message-container').innerHTML += '<div><b>' + data.user + '</b>: ' + data.message + '</div>'
             }
         })
