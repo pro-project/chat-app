@@ -19,6 +19,7 @@ io.on('connection', function(socket){
       socket.emit('userExists', data + ' username is taken! Try some other username.');
     }
     else{
+      // console.log(users)
       users.push(data);
       socket.emit('userSet', {username: data});
       
